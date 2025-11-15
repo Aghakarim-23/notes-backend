@@ -5,12 +5,18 @@ import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import authRoutes from "./routes/authRoutes.js"
 import notesRoute from "./routes/notesRoute.js"
+import { swaggerUi, swaggerSpec } from "./swagger/swagger.js";
+
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
 
 const PORT = process.env.PORT || 8001;
 

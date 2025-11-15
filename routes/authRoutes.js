@@ -1,10 +1,65 @@
 import express from "express";
-import { register , login} from "../controllers/auhtController.js";
+import { register, login } from "../controllers/auhtController.js";
 
 const router = express.Router();
 
+router.post("/register", register);
 
-router.post("/register", register)
-router.post("/login", login)
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *      summary: User register
+ *      tags: [Auth]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                        email:
+ *                          type: string
+ *                        username:
+ *                          type: string
+ *                        password:
+ *                           type: string
+ *      responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Email is already exists
+ *       500:
+ *         description: Server error
+ *
+ *
+ *
+ *
+ */
 
-export default router
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *       400:
+ *         description: Invalid credentials
+ */
+router.post("/login", login);
+
+export default router;
