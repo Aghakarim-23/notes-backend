@@ -6,6 +6,8 @@ import connectDB from "./config/connectDB.js";
 import authRoutes from "./routes/authRoutes.js"
 import notesRoute from "./routes/notesRoute.js"
 import { swaggerUi, swaggerSpec } from "./swagger/swagger.js";
+import cookieParser from "cookie-parser";
+
 
 
 dotenv.config();
@@ -13,6 +15,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser())
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

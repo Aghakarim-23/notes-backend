@@ -21,7 +21,6 @@ export const register = async (req, res) => {
 
     const user = await User.create(newUser);
 
-
     res.status(201).json({
       message: "User created successfully",
       user: {
@@ -46,9 +45,7 @@ export const login = async (req, res) => {
     if (!isMathced)
       return res.status(400).json({ message: "Password is inccorect" });
 
-
-
-     const accessToken = jwt.sign(
+    const accessToken = jwt.sign(
       { id: user._id },
       process.env.JWT_ACCESS_SECRET,
       { expiresIn: "15m" }
@@ -60,7 +57,12 @@ export const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       message: "Login is successfull",
@@ -74,5 +76,30 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token)
+      return res.status(401).json({ message: "Refresh token missing" });
+
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_ACCESS_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.status(200).json({
+      accessToken: newAccessToken,
+      message: "New access token created",
+    });
+  } catch (error) {
+    return res
+      .status(403)
+      .json({ message: "Invalid or expired refresh token" });
   }
 };

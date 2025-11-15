@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login } from "../controllers/auhtController.js";
+import { register, login, refreshToken } from "../controllers/auhtController.js";
 
 const router = express.Router();
 
@@ -61,5 +61,8 @@ router.post("/register", register);
  *         description: Invalid credentials
  */
 router.post("/login", login);
+
+
+router.get("/refresh", refreshToken)
 
 export default router;
