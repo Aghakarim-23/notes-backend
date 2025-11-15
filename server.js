@@ -1,0 +1,25 @@
+import express from "express";
+import cors from "cors";
+import colors from "colors";
+import dotenv from "dotenv";
+import connectDB from "./config/connectDB.js";
+import authRoutes from "./routes/authRoutes.js"
+import notesRoute from "./routes/notesRoute.js"
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+const PORT = process.env.PORT || 8001;
+
+connectDB();
+
+app.use("/api/auth", authRoutes )
+
+app.use("/notes/", notesRoute)
+
+app.listen(PORT, () => {
+  console.log(`App is working on ${PORT}`.bgGreen);
+});
