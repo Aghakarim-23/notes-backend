@@ -40,6 +40,36 @@ export const getNotes = async (req, res) => {
   }
 };
 
+export const noteEdit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body; 
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid note ID" });
+    }
+
+    const note = await Note.findOneAndUpdate(
+      { _id: id, userId: req.userId },
+      { title, content },
+      { new: true } 
+    );
+
+    if (!note) {
+      return res.status(404).json({ message: "Note not found or unauthorized" });
+    }
+
+    console.log("Editing note ID:", id);
+    console.log("User ID:", req.userId);
+    console.log("Updated note:", note);
+
+    res.json({ message: "Note updated successfully", note });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const deleteNote = async (req, res) => {
   try {
     const { id } = req.params;
