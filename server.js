@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import authRoutes from "./routes/authRoutes.js"
 import notesRoute from "./routes/notesRoute.js"
+import userRoute from "./routes/userRoute.js"
 import { swaggerUi, swaggerSpec } from "./swagger/swagger.js";
 import cookieParser from "cookie-parser";
 
@@ -31,6 +32,8 @@ connectDB();
 app.use("/api/auth", authRoutes )
 
 app.use("/notes/", notesRoute)
+
+app.use('/users', userRoute)
 
 app.listen(PORT, () => {
   console.log(`App is working on ${PORT}`.bgGreen);
