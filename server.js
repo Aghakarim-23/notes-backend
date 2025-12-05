@@ -16,8 +16,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-  // origin: "https://agas-notes-app.netlify.app",
-  origin: "http://localhost:5173",
+  origin: "https://agas-notes-app.netlify.app",
+  // origin: "http://localhost:5173",
 }));
 app.use(cookieParser())
 
