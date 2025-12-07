@@ -8,16 +8,23 @@ import notesRoute from "./routes/notesRoute.js"
 import userRoute from "./routes/userRoute.js"
 import { swaggerUi, swaggerSpec } from "./swagger/swagger.js";
 import cookieParser from "cookie-parser";
+import path from "path"
+
+
+const envFile = process.env.NODE_ENV ===  "production" ? 
+  path.resolve(".env.production") :
+  path.resolve(".env.local") 
 
 
 
-dotenv.config();
+dotenv.config({path: envFile});
+
+dotenv.config({path: path.resolve(".env")})
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-  // origin: "https://agas-notes-app.netlify.app",
-  origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
 }));
 app.use(cookieParser())
 
