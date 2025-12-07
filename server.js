@@ -26,6 +26,11 @@ app.use(express.json());
 app.use(cors({
     origin: process.env.FRONTEND_URL,
 }));
+
+
+console.log("Environment:", process.env.NODE_ENV);
+console.log("Frontend URL:", process.env.FRONTEND_URL);
+
 app.use(cookieParser())
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
