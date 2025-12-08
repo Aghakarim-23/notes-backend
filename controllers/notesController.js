@@ -59,10 +59,6 @@ export const noteEdit = async (req, res) => {
       return res.status(404).json({ message: "Note not found or unauthorized" });
     }
 
-    console.log("Editing note ID:", id);
-    console.log("User ID:", req.userId);
-    console.log("Updated note:", note);
-
     res.json({ message: "Note updated successfully", note });
   } catch (error) {
     console.error(error);
@@ -76,9 +72,6 @@ export const deleteNote = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid note ID" });
     }
-
-    console.log("Deleting note ID:", id);
-    console.log("User ID:", req.userId);
 
     const note = await Note.findOneAndDelete({
       _id: id,

@@ -28,8 +28,7 @@ app.use(cors({
 }));
 
 
-console.log("Environment:", process.env.NODE_ENV);
-console.log("Frontend URL:", process.env.FRONTEND_URL);
+
 
 app.use(cookieParser())
 
