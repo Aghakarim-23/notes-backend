@@ -90,3 +90,15 @@ export const deleteNote = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const getAllNotes = async (req,res) => {
+  try {
+    const allNotes = await Note.find().populate("userId").select("-password")
+    if(!allNotes) return res.status(404).json({message: "Users not found"})    
+      res.status(200).json({message: "All notes found successfully", notes: allNotes})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+} 
