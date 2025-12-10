@@ -35,18 +35,15 @@ export const editRoleUser = async (req,res) => {
   const {id} = req.params;
   const {role} = req.body;
   try {
-    if(req.user.role !== "admin") return res.status(401).json({message: "Only Admin can change role"})
+    if(req.user.role !== "admin") return res.status(403).json({message: "Only admin can access this route"}) // I prevented this both side front and back side
     
-    if(req.user._id.toString() === id) return res.status(401).json({message: "User cannot change own role"})
+    if(req.user.id === id) return res.status(403).json({message: "User cannot change own role"})
 
     const updatedUserRole = await User.findByIdAndUpdate(id, {role}, {new: true})
 
     if (!updatedUserRole) {
       return res.status(404).json({ message: "User not found" });
     }
-
-
-
 
     res.status(200).json({message: "User role updated successfully", updatedUserRole})
 
