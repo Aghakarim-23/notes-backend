@@ -26,5 +26,22 @@ export const deleteUser = async (req,res) => {
     res.status(200).json({message: "User deleted successfully", deletedUser: user})
   } catch (error) {
     console.error(error)
+    res.status(500).json({ message: "Server error" });
+
   }
 } 
+
+export const editRoleUser = async (req,res) => {
+  const {id} = req.params;
+  const {role} = req.body;
+  try {
+    const updatedUserRole = await User.findByIdAndUpdate(id, {role}, {new: true})
+
+    res.status(200).json({message: "User role updated successfully"}, updatedUserRole)
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
