@@ -35,9 +35,20 @@ export const editRoleUser = async (req,res) => {
   const {id} = req.params;
   const {role} = req.body;
   try {
+    if(req.user.role !== "admin") return res.status(401).json({message: "Only Admin can change role"})
+    
+    if(req.user._id.toString() === id) return res.status(401).json({message: "User cannot change own role"})
+
     const updatedUserRole = await User.findByIdAndUpdate(id, {role}, {new: true})
 
-    res.status(200).json({message: "User role updated successfully"}, updatedUserRole)
+    if (!updatedUserRole) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+
+
+
+    res.status(200).json({message: "User role updated successfully", updatedUserRole})
 
 
   } catch (error) {
