@@ -127,10 +127,12 @@ export const forgotPassword = async (req, res) => {
     const resetUrl = `https://agas-notes-app.netlify.app/reset-password/${resetToken}`
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: process.env.SMTP_Server,
+      port: process.env.Port,
+      secure: false,
       auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASS,
+        user: process.env.Login,
+        pass: process.env.SMTP_PASSWORD,
       },
     });
 
