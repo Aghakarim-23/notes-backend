@@ -128,7 +128,7 @@ export const forgotPassword = async (req, res) => {
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
+      port: Number(process.env.SMTP_PORT),
       secure: false,
       auth: {
         user: process.env.SMTP_USER,
@@ -138,7 +138,7 @@ export const forgotPassword = async (req, res) => {
 
     await transporter.sendMail({
       to: user.email,
-      subject: "Reset your password",
+      subject: "Reset your password", 
       html: `
         <h3>Password Reset Request</h3>
         <p>Please click the link below to reset your password:</p>
