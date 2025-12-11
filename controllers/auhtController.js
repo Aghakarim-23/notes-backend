@@ -123,8 +123,8 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
-    // const resetUrl = `https://agas-notes-app.netlify.app/reset-password/${resetToken}`
+    // const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetUrl = `https://agas-notes-app.netlify.app/reset-password/${resetToken}`
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
