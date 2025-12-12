@@ -11,23 +11,15 @@ import cookieParser from "cookie-parser";
 import path from "path"
 
 
-const envFile = process.env.NODE_ENV ===  "production" ? 
-  path.resolve(".env.production") :
-  path.resolve(".env.local") 
+dotenv.config();
 
 
-
-dotenv.config({path: envFile});
-
-dotenv.config({path: path.resolve(".env")})
 
 const app = express();
 app.use(express.json());
 app.use(cors({
     origin: process.env.FRONTEND_URL,
 }));
-
-
 
 
 app.use(cookieParser())

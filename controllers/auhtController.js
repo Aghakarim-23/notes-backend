@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const register = async (req, res) => {
   try {
@@ -123,22 +126,31 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
-    const resetUrl = `https://agas-notes-app.netlify.app/reset-password/${resetToken}`
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false,
+      service: "gmail",
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
       },
     });
 
+    // const resetUrl = `https://agas-notes-app.netlify.app/reset-password/${resetToken}`
+
+    // const transporter = nodemailer.createTransport({
+    //   host: process.env.SMTP_HOST,
+    //   port: Number(process.env.SMTP_PORT),
+    //   secure: false,
+    //   auth: {
+    //     user: process.env.SMTP_USER,
+    //     pass: process.env.SMTP_PASS,
+    //   },
+    // });
+
     await transporter.sendMail({
       to: user.email,
-      subject: "Reset your password", 
+      subject: "Reset your password",
       html: `
         <h3>Password Reset Request</h3>
         <p>Please click the link below to reset your password:</p>
@@ -171,60 +183,59 @@ export const verifyResetToken = async (req, res) => {
   }
 };
 
-export const resetPassword = async (req,res) => {
-    const {token} = req.params;
-    const {password} = req.body;
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
   try {
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpire: {$gt: Date.now()}
-    })
-
+      resetPasswordExpire: { $gt: Date.now() },
+    });
 
     if (!user)
-    return res.status(400).json({ message: "Invalid or expired token" });
+      return res.status(400).json({ message: "Invalid or expired token" });
 
-    const hashedPassword = await bcrypt.hash(password,10)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     user.password = hashedPassword;
 
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
-
     await user.save();
 
     res.json({ message: "Password has been reset successfully" });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-
-export const changePassword = async (req,res) => {
+export const changePassword = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
+    const user = await User.findById(req.user.id);
 
-    const {old_password, new_password, confirm_password} = req.body;
+    const { old_password, new_password, confirm_password } = req.body;
 
+    if (new_password !== confirm_password)
+      return res
+        .status(400)
+        .json({ message: "New password and confirm password do not match" });
 
-    if(new_password !== confirm_password) return res.status(400).json({ message: "New password and confirm password do not match" });
+    const isMatch = await bcrypt.compare(old_password, user.password);
 
-    const isMatch = await bcrypt.compare(old_password, user.password)
+    if (!isMatch)
+      return res.status(400).json({ message: "Old password is incorrect" });
 
-    if(!isMatch) return res.status(400).json({message: "Old password is incorrect"})
-
-    const hashedPassword = await bcrypt.hash(new_password, 10)
+    const hashedPassword = await bcrypt.hash(new_password, 10);
 
     user.password = hashedPassword;
 
-    await user.save()
- 
-    res.status(200).json({message: "Password changed successfully"})
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
