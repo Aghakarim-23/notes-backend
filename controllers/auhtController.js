@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 export const register = async (req, res) => {
   try {
@@ -128,6 +128,17 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtp-relay.brevo.com", 
+    //   port: 587,
+    //   secure: false, // 
+    //   auth: {
+    //     user: "9ddecc001@smtp-brevo.com", 
+    //     pass: process.env.BREVO_API_KEY,
+    //   },
+    // });
+
+    // ! gmail ile yeniden yoxlayaq
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -161,8 +172,8 @@ export const forgotPassword = async (req, res) => {
 
     res.json({ message: "Password reset email sent" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error" });
+    console.log("Forgot Password error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
