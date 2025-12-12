@@ -112,6 +112,14 @@ export const refreshToken = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! forgot password
+
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -126,40 +134,22 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+       const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-    // const transporter = nodemailer.createTransport({
-    //   host: "smtp-relay.brevo.com", 
-    //   port: 587,
-    //   secure: false, // 
-    //   auth: {
-    //     user: "9ddecc001@smtp-brevo.com", 
-    //     pass: process.env.BREVO_API_KEY,
-    //   },
-    // });
-
-    // ! gmail ile yeniden yoxlayaq
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+  
+      host: "smtp-relay.brevo.com",
+      port: 587,
+      secure: false, 
+      requireTLS: true, 
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
     });
 
-    // const resetUrl = `https://agas-notes-app.netlify.app/reset-password/${resetToken}`
-
-    // const transporter = nodemailer.createTransport({
-    //   host: process.env.SMTP_HOST,
-    //   port: Number(process.env.SMTP_PORT),
-    //   secure: false,
-    //   auth: {
-    //     user: process.env.SMTP_USER,
-    //     pass: process.env.SMTP_PASS,
-    //   },
-    // });
-
     await transporter.sendMail({
+      from: `"Notes App" <hemidzade1010@gmail.com>`, 
       to: user.email,
       subject: "Reset your password",
       html: `
@@ -172,10 +162,29 @@ export const forgotPassword = async (req, res) => {
 
     res.json({ message: "Password reset email sent" });
   } catch (error) {
-    console.log("Forgot Password error:", error);
+    console.log("Forgot Password error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! forgot password
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const verifyResetToken = async (req, res) => {
   const { token } = req.params;
