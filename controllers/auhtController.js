@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { sendEmail } from "../utils/sendEmail.js";
+
 
 dotenv.config();
 
@@ -148,17 +150,18 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-      await transporter.sendMail({
-        from: `"Aghakarim Hamidzada" <support@aghakarim.info>`, 
-        to: user.email,
-        subject: "Reset your password",
-        html: `
-          <h3>Password Reset Request</h3>
-          <p>Please click the link below to reset your password:</p>
-          <a href="${resetUrl}">${resetUrl}</a>
-          <p>This link will expire in 10 minutes.</p>
-        `,
-      });
+
+await sendEmail({
+  to: user.email,
+  subject: "Reset your password",
+  html: `
+    <h3>Password Reset</h3>
+    <p>Click the link below:</p>
+    <a href="${resetUrl}">${resetUrl}</a>
+    <p>This link expires in 10 minutes.</p>
+  `,
+});
+
 
     res.json({ message: "Password reset email sent" });
     console.log("ssended")
