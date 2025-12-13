@@ -155,11 +155,28 @@ await sendEmail({
   to: user.email,
   subject: "Reset your password",
   html: `
-    <h3>Password Reset</h3>
-    <p>Click the link below:</p>
-    <a href="${resetUrl}">${resetUrl}</a>
-    <p>This link expires in 10 minutes.</p>
-  `,
+     <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
+    <h2>Password Reset Request</h2>
+    <p>Hello,</p>
+    <p>You requested a password reset. Click the button below to reset your password:</p>
+    <a href="${resetUrl}" 
+       style="
+         display: inline-block;
+         padding: 12px 24px;
+         font-size: 16px;
+         color: white;
+         background-color: #007bff;
+         text-decoration: none;
+         border-radius: 5px;
+       ">
+       Reset Password
+    </a>
+    <p>This link will expire in 10 minutes.</p>
+    <hr>
+    <p style="font-size:12px; color:gray;">
+      If you did not request this, you can ignore this email.
+    </p>
+  </div>`,
 });
 
 
