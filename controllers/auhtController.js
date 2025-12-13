@@ -148,19 +148,20 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-    await transporter.sendMail({
-      from: `"Notes App" <hemidzade1010@gmail.com>`, 
-      to: user.email,
-      subject: "Reset your password",
-      html: `
-        <h3>Password Reset Request</h3>
-        <p>Please click the link below to reset your password:</p>
-        <a href="${resetUrl}">${resetUrl}</a>
-        <p>This link will expire in 10 minutes.</p>
-      `,
-    });
+      await transporter.sendMail({
+        from: `"Aghakarim Hamidzada" <support@aghakarim.info>`, 
+        to: user.email,
+        subject: "Reset your password",
+        html: `
+          <h3>Password Reset Request</h3>
+          <p>Please click the link below to reset your password:</p>
+          <a href="${resetUrl}">${resetUrl}</a>
+          <p>This link will expire in 10 minutes.</p>
+        `,
+      });
 
     res.json({ message: "Password reset email sent" });
+    console.log("ssended")
   } catch (error) {
     console.log("Forgot Password error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
