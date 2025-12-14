@@ -6,7 +6,6 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { sendEmail } from "../utils/sendEmail.js";
 
-
 dotenv.config();
 
 export const register = async (req, res) => {
@@ -20,21 +19,30 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const verifyToken = crypto.randomBytes(32).toString("hex");
+
     const newUser = {
       username,
       email,
       password: hashedPassword,
+      emailVerifyToken: verifyToken,
     };
 
     const user = await User.create(newUser);
 
+    const verifyLink = `${process.env.CLIENT_URL}/verify-email/${verifyToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Verify your email",
+      html: `
+      <p>Click the link below to verify your email:</p>
+      <a href="${verifyLink}">Verify Email</a>
+    `,
+    });
+
     res.status(201).json({
-      message: "User created successfully",
-      user: {
-        id: user._id,
-        username,
-        email,
-      },
+      message: "Registration successful. Please verify your email.",
     });
   } catch (error) {
     console.error("Error happened:", error);
@@ -46,7 +54,14 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+
     if (!user) return res.status(404).json({ message: "User is not found" });
+
+    if (!user.isVerified) {
+      return res.status(403).json({
+        message: "Please verify your email first",
+      });
+    }
 
     const isMathced = await bcrypt.compare(password, user.password);
     if (!isMathced)
@@ -114,12 +129,6 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! forgot password
 
 export const forgotPassword = async (req, res) => {
@@ -136,25 +145,23 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-       const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
     const transporter = nodemailer.createTransport({
-  
       host: "smtp-relay.brevo.com",
       port: 587,
-      secure: false, 
-      requireTLS: true, 
+      secure: false,
+      requireTLS: true,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
 
-
-await sendEmail({
-  to: user.email,
-  subject: "Reset your password",
-  html: `
+    await sendEmail({
+      to: user.email,
+      subject: "Reset your password",
+      html: `
      <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
     <h2>Password Reset Request</h2>
     <p>Hello,</p>
@@ -177,35 +184,17 @@ await sendEmail({
       If you did not request this, you can ignore this email.
     </p>
   </div>`,
-});
-
+    });
 
     res.json({ message: "Password reset email sent" });
-    console.log("ssended")
+    console.log("ssended");
   } catch (error) {
     console.log("Forgot Password error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-
-
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! forgot password
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const verifyResetToken = async (req, res) => {
   const { token } = req.params;
@@ -279,4 +268,20 @@ export const changePassword = async (req, res) => {
     console.log(error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+
+  const user = User.findOne({ emailVerifyToken: token });
+
+  if (!user)
+    return res.status(400).json({ message: "Invalid or expired token" });
+
+  user.isVerified = true;
+  user.emailVerifyToken = undefined;
+
+  await user.save();
+
+  res.json({ message: "Email verified successfully" });
 };

@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    emailVerifyToken: {
+      type: String,
+    },  
      isBlocked: {
       type: Boolean,
       default: false
