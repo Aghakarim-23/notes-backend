@@ -12,6 +12,9 @@ import path from "path";
 
 dotenv.config();
 
+console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY);
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
+
 const app = express();
 app.use(express.json());
 app.use(
