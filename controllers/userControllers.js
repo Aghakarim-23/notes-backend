@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import { verifyEmail } from "./auhtController.js";
 
 export const getAllUser = async (req, res) => {
   try {
@@ -52,4 +53,25 @@ export const editRoleUser = async (req,res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
+}
+
+export const editVerifyStatus =  async (req,res) => {
+  const {id} = req.params;
+  const { isVerified } = req.body;
+try {
+      const updatedUserVerifyStatus = await User.findByIdAndUpdate(id, {isVerified: isVerified === true || isVerified === "true"}, {new: true})
+
+      if(!updatedUserVerifyStatus) return res.status(404).json({ message: "User not found" });
+
+      console.log(updatedUserVerifyStatus)
+
+      res.status(200).json({message: "User verify status updated successfully", updatedUserVerifyStatus})
+
+
+
+} catch (error) {
+  console.error(error);
+    res.status(500).json({ message: "Server error" });
+}
+
 }
