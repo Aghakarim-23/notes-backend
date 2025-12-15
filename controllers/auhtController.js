@@ -32,14 +32,65 @@ export const register = async (req, res) => {
 
     const verifyLink = `${process.env.CLIENT_URL}/verify-email/${verifyToken}`;
 
-    await sendEmail({
-      to: user.email,
-      subject: "Verify your email",
-      html: `
-      <p>Click the link below to verify your email:</p>
-      <a href="${verifyLink}">Verify Email</a>
-    `,
-    });
+await sendEmail({
+  to: user.email,
+  subject: "Verify your email address",
+  html: `
+  <div style="font-family: Arial, Helvetica, sans-serif; background-color: #f3f4f6; padding: 40px;">
+    <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 32px; text-align: center;">
+      
+      <div style="margin-bottom: 24px;">
+        <div style="
+          width: 56px;
+          height: 56px;
+          margin: 0 auto;
+          border-radius: 50%;
+          background-color: #dcfce7;
+          color: #16a34a;
+          font-size: 28px;
+          line-height: 56px;
+        ">
+          ✓
+        </div>
+      </div>
+
+      <h2 style="color: #111827; margin-bottom: 12px;">
+        Verify your email
+      </h2>
+
+      <p style="color: #4b5563; font-size: 15px; margin-bottom: 24px;">
+        Thanks for creating an account.  
+        Please confirm your email address by clicking the button below.
+      </p>
+
+      <a
+        href="${verifyLink}"
+        style="
+          display: inline-block;
+          background-color: #16a34a;
+          color: #ffffff;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 600;
+          margin-bottom: 24px;
+        "
+      >
+        Verify Email
+      </a>
+
+      <p style="color: #6b7280; font-size: 13px; margin-top: 24px;">
+        If you didn’t create this account, you can safely ignore this email.
+      </p>
+
+      <p style="color: #9ca3af; font-size: 12px; margin-top: 16px;">
+        This link will expire in 15 minutes.
+      </p>
+    </div>
+  </div>
+  `,
+});
+
 
     res.status(201).json({
       message: "Registration successful. Please verify your email.",
