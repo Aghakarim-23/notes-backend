@@ -102,3 +102,25 @@ export const getAllNotes = async (req,res) => {
     res.status(500).json({ message: "Server error" });
   }
 } 
+
+export const search = async (req,res) => {
+  const {search} = req.query
+  const userId = req.user.id;
+
+  try {
+    
+    if(!search || search.trim() === "") return res.status(400).json({ message: "Search query is required" });
+
+
+
+    console.log(search)
+    
+    const notes = await Note.find({
+      userId: userId,
+      title: search.trim()
+    })
+    res.status(200).json(notes)
+  } catch (error) {
+    console.error(error)
+  }
+}

@@ -1,6 +1,6 @@
 import express from "express"
 
-import { createNote, getNotes, noteDetail, deleteNote, noteEdit, getAllNotes} from "../controllers/notesController.js";
+import { createNote, getNotes, noteDetail, deleteNote, noteEdit, getAllNotes, search} from "../controllers/notesController.js";
 import { verifyToken } from "../middleware/auth.js";
 import { admin } from "../middleware/adminMiddleware.js";
 
@@ -17,6 +17,8 @@ router.put("/noteEdit/:id", verifyToken, noteEdit)
 router.delete("/deleteNote/:id", verifyToken, deleteNote)
 
 router.get("/getAllNotes", verifyToken, admin,  getAllNotes)
+
+router.get("/search", verifyToken,  search)
 
 
 export default router
