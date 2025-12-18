@@ -110,14 +110,10 @@ export const search = async (req,res) => {
   try {
     
     if(!search || search.trim() === "") return res.status(400).json({ message: "Search query is required" });
-
-
-
-    console.log(search)
     
     const notes = await Note.find({
       userId: userId,
-      title: search.trim()
+      title: {$regex: search.trim(), $options: "i"}
     })
     res.status(200).json(notes)
   } catch (error) {
